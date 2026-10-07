@@ -9,7 +9,7 @@ export const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: "mysql",
     logging: false,
-  },
+  }
 );
 
 export const startDB = async () => {
@@ -17,8 +17,13 @@ export const startDB = async () => {
     await sequelize.authenticate();
 
     console.log("Conexión a MySQL establecida correctamente");
-  } catch (error) {
-    console.error("Error al conectar con MySQL:", error.message);
-    process.exit(1);
-  }
+
+    await sequelize.sync();
+
+    console.log("Modelos sincronizados correctamente");
+} catch (error) {
+  console.error("Error completo al conectar con MySQL:");
+  console.error(error);
+  process.exit(1);
+}
 };
