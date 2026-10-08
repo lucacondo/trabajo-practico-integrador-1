@@ -104,6 +104,7 @@ export const login = async (req, res) => {
       secure: false,
       sameSite: "lax",
       maxAge: 1000 * 60 * 60,
+      path: "/",
     });
 
     return res.status(200).json({
@@ -114,6 +115,69 @@ export const login = async (req, res) => {
         email: user.email,
         role: user.role,
       },
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+};
+
+export const profile = async (req, res) => {
+  try {
+    const user = await UserModel.findByPk(req.user.id, {
+      attributes: [
+        "id",
+        "username",
+        "email",
+        "role",
+        "created_at",
+        "updated_at",
+      ],
+      include: {
+        model: ProfileModel,
+        as: "profile",
+        attributes: [
+          "first_name",
+          "last_name",
+          "biography",
+          "avatar_url",
+          "birth_date",
+        ],
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Usuario no encontrado",
+      });
+    }
+
+    return res.status(200).json({
+      user,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+    });
+
+    return res.status(200).json({
+      message: "Logout exitoso",
     });
   } catch (error) {
     console.error(error);
