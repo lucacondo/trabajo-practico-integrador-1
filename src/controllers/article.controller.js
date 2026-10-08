@@ -4,6 +4,7 @@ import {
   ArticleModel,
   UserModel,
   TagModel,
+  ArticleTagModel,
 } from "../models/index.js";
 
 const articleInclude = [
@@ -185,6 +186,12 @@ export const updateArticle = async (req, res) => {
 export const deleteArticle = async (req, res) => {
   try {
     const article = req.article;
+
+    await ArticleTagModel.destroy({
+      where: {
+        article_id: article.id,
+      },
+    });
 
     await article.destroy();
 

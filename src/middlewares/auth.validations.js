@@ -97,3 +97,40 @@ export const loginValidations = [
     .notEmpty()
     .withMessage("La contraseña es obligatoria"),
 ];
+
+export const updateProfileValidations = [
+  body("first_name")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("El nombre no puede estar vacío")
+    .isLength({ min: 2, max: 50 })
+    .withMessage("El nombre debe tener entre 2 y 50 caracteres")
+    .matches(/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$/)
+    .withMessage("El nombre solo puede contener letras"),
+
+  body("last_name")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("El apellido no puede estar vacío")
+    .isLength({ min: 2, max: 50 })
+    .withMessage("El apellido debe tener entre 2 y 50 caracteres")
+    .matches(/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$/)
+    .withMessage("El apellido solo puede contener letras"),
+
+  body("biography")
+    .optional({ checkFalsy: true })
+    .isLength({ max: 500 })
+    .withMessage("La biografía no puede superar los 500 caracteres"),
+
+  body("avatar_url")
+    .optional({ checkFalsy: true })
+    .isURL()
+    .withMessage("El avatar debe ser una URL válida"),
+
+  body("birth_date")
+    .optional({ checkFalsy: true })
+    .isISO8601()
+    .withMessage("La fecha de nacimiento no es válida"),
+];

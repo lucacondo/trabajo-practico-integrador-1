@@ -3,6 +3,7 @@ import { matchedData } from "express-validator";
 import { sequelize } from "../config/database.js";
 import { UserModel, ProfileModel } from "../models/index.js";
 
+
 import {
   hashPassword,
   comparePassword,
@@ -157,6 +158,43 @@ export const profile = async (req, res) => {
 
     return res.status(200).json({
       user,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const data = matchedData(req);
+
+    if (Object.keys(data).length === 0) {
+      return res.status(400).json({
+        message: "No se enviaron datos para actualizar",
+      });
+    }
+
+    const profile = await ProfileModel.findOne({
+      where: {
+        user_id: req.user.id,
+      },
+    });
+
+    if (!profile) {
+      return res.status(404).json({
+        message: "Perfil no encontrado",
+      });
+    }
+
+    await profile.update(data);
+
+    return res.status(200).json({
+      message: "Perfil actualizado correctamente",
+      profile,
     });
   } catch (error) {
     console.error(error);
